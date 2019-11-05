@@ -1,49 +1,57 @@
 #include<iostream>
 #include<iomanip>
 #include<string>
-#include<fstream>
+//the code keeps giving me errors, can you please try running this on your computer?
+//i feel like visual studio is broken
 using namespace std;
-void getData(); //read in from file
-void showMenu(string, double, char); //show menu
-void printCheck(); //print check
+int MAX;
 int counter = 0; //total amount of orders customer makes
 struct menuItemType { //STRUCT FOR WHOLE DATA BEING READ IN FROM FILE
 	string menuItem;
 	double menuPrice;
 	int count = 0;
-} menuList[8];
+};
 struct order { // STRUCT TO HOLD THE ORDER THE USER ENTERS
 	string item;
 	double price;
 	int count1 = 0;
-} orderList[8];
+};
+menuItemType* getData(); //read in from file
+void showMenu(string, double); //show menu
+void printCheck(menuItemType*); //print check
+int numItems();
 int main() {
-	cout << "Welcome to Johnny’s Restaurant" << endl;
-	getData();
+	cout << "Welcome to Johnnyâ€™s Restaurant" << endl;
+	menuItemType *pMenu = getData();
+	printCheck(pMenu);
+	system("PAUSE");
+	return 0;
 }
-void getData() {
-	ifstream inData;
-	char dollar;
-
-	inData.open("menu.txt");
-	if (!inData)
-		exit(1);
-	int i = 0;
-	while (!inData.eof()) {
-		for (i = 0; i <= 8; i++) {
-			inData >> menuList[i].menuItem; //read into array from file
-			inData >> dollar;
-			inData >> menuList[i].menuPrice;
-			showMenu(menuList[i].menuItem, menuList[i].menuPrice, dollar);
-		}
+menuItemType* getData()
+{
+	int numOfItems;
+	numOfItems = numItems();
+	menuItemType * menuList = new menuItemType[numOfItems];
+	for (int i = 0; i < numOfItems; i++) {
+		cout << "Enter name of item: ";
+		cin.ignore();
+		getline(cin, menuList[i].menuItem);
+		cout << "How much does it cost? ";
+		cin >> menuList[i].menuPrice;
 	}
-	printCheck();
-}
-void showMenu(string item, double price, char dollar) {
+	for (int i = 0; i <= numOfItems; i++) {
+		showMenu(menuList[i].menuItem, menuList[i].menuPrice);
+	}
+	return menuList;
 
-	cout << left << setw(13) << item << '\t' << dollar << price << endl;
 }
-void printCheck() {
+void showMenu(string item, double price) {
+
+	cout << left << setw(13) << item << '\t' << '$' << price << endl;
+}
+void printCheck(menuItemType*pMenu) {
+	int numOfItems = numItems();
+	order * orderList = new order[numOfItems];
 	char loop = 'y';
 	double total = 0;
 	int choice;
@@ -52,10 +60,10 @@ void printCheck() {
 		cout << "Enter number of item (0 for Plain Egg, 7 for Tea)" << endl;
 		cin >> choice;
 		cout << "How many would you like to order?" << endl;
-		cin >> menuList[choice].count;
-		orderList[counter].item = menuList[choice].menuItem; //hold user choice into different struct
-		orderList[counter].price = menuList[choice].menuPrice;
-		orderList[counter].count1 = menuList[choice].count;
+		cin >> pMenu[choice].count;
+		orderList[counter].item = pMenu[choice].menuItem; //hold user choice into different struct
+		orderList[counter].price = pMenu[choice].menuPrice;
+		orderList[counter].count1 = pMenu[choice].count;
 		cout << "Would you like to make another choice? (Y/N)" << endl;
 		cin >> loop;
 		if (loop == 'y' || loop == 'Y')
@@ -70,4 +78,10 @@ void printCheck() {
 	cout << setw(15) << "Amount total: " << '$' << total << endl;
 	cout << setw(15) << "Tax: " << '$' << total * 0.05 << endl;
 	cout << setw(15) << "Amount due: " << '$' << total * 0.05 + total << endl;
+}
+int numItems() {
+	int numOfItems;
+	cout << "Enter how many items in your menu." << endl;
+	cin >> numOfItems;
+	return numOfItems;
 }
