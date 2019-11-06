@@ -1,73 +1,76 @@
 #include<iostream>
-#include<iomanip>
 #include<string>
-#include<fstream>
 using namespace std;
-void getData(); //read in from file
-void showMenu(string, double, char); //show menu
-void printCheck(); //print check
-int counter = 0; //total amount of orders customer makes
-struct menuItemType { //STRUCT FOR WHOLE DATA BEING READ IN FROM FILE
-	string menuItem;
-	double menuPrice;
-	int count = 0;
-} menuList[8];
-struct order { // STRUCT TO HOLD THE ORDER THE USER ENTERS
-	string item;
-	double price;
-	int count1 = 0;
-} orderList[8];
+struct customer {
+	string customerName;
+	int arrivalTime;
+	int serviceTime;
+	int finishTime;
+};
+struct FCFSQueue {
+	customer customerList[100];
+	int length;
+};
+bool isEmpty(FCFSQueue);
+int GetLength(FCFSQueue);
+void Enqueue(FCFSQueue&, customer);
+void Dequeue(FCFSQueue&);
+
 int main() {
-	cout << "Welcome to Johnny’s Restaurant" << endl;
-	getData();
-}
-void getData() {
-	ifstream inData;
-	char dollar;
 
-	inData.open("menu.txt");
-	if (!inData)
-		exit(1);
-	int i = 0;
-	while (!inData.eof()) {
-		for (i = 0; i <= 8; i++) {
-			inData >> menuList[i].menuItem; //read into array from file
-			inData >> dollar;
-			inData >> menuList[i].menuPrice;
-			showMenu(menuList[i].menuItem, menuList[i].menuPrice, dollar);
-		}
-	}
-	printCheck();
-}
-void showMenu(string item, double price, char dollar) {
+	FCFSQueue queue;
+	queue.length = 0;
+	customer newCus[2];
+	for (int i = 0; i < 2; ++i) {
+		cout << "Enter customer name: ";
+		cin >> newCus[i].customerName;
+		cout << "Enter arrival time :  ";
+		cin >> newCus[i].arrivalTime;
+		cout << "Enter service time :  ";
+		cin >> newCus[i].serviceTime;
+		newCus[i].finishTime = newCus[i].arrivalTime + newCus[i].serviceTime;
 
-	cout << left << setw(13) << item << '\t' << dollar << price << endl;
+		Enqueue(queue, newCus[i]);
+	}
+	for (int i = 0; i < 2; i++) {
+		cout << "Queue: " << i + 1 << endl;
+		cout << "Name: " << newCus[i].customerName << endl;
+		cout << "Arrival Time: " << newCus[i].arrivalTime << endl;
+		cout << "Service Time: " << newCus[i].serviceTime << endl;
+		cout << "Finish Time: " << newCus[i].finishTime << endl;
+	}
+	Dequeue(queue);
+	Dequeue(queue);
+	Dequeue(queue);
+	system("PAUSE");
+	return 0;
 }
-void printCheck() {
-	char loop = 'y';
-	double total = 0;
-	int choice;
-	while (loop == 'y' || loop == 'Y') {
-		cout << "Which item would you like to choose?" << endl;
-		cout << "Enter number of item (0 for Plain Egg, 7 for Tea)" << endl;
-		cin >> choice;
-		cout << "How many would you like to order?" << endl;
-		cin >> menuList[choice].count;
-		orderList[counter].item = menuList[choice].menuItem; //hold user choice into different struct
-		orderList[counter].price = menuList[choice].menuPrice;
-		orderList[counter].count1 = menuList[choice].count;
-		cout << "Would you like to make another choice? (Y/N)" << endl;
-		cin >> loop;
-		if (loop == 'y' || loop == 'Y')
-			counter++; //counter increases to be able to store different choices starting from index 0
-		//counter is used as a loop variable to print out user choices
-
+bool IsEmpty(FCFSQueue queue) {
+	if (queue.length == 0)
+		return true;
+	else return false;
+}
+int GetLength(FCFSQueue queue) {
+	return queue.length;
+}
+void Enqueue(FCFSQueue& queue, customer cus) {
+	if (queue.length >= 100) {
+		cout << "Queue is full!" << endl;
+		return;
 	}
-	for (int i = 0; i <= counter; i++) { //loop using how many orders user makes (not how many items)
-		cout << left << setw(12) << orderList[i].item << " " << orderList[i].count1 << ' ' << '$' << orderList[i].price * orderList[i].count1 << endl;
-		total += orderList[i].price * orderList[i].count1;
+	queue.customerList[queue.length] = cus;
+	++queue.length;
+	cout << "Customer: " << cus.customerName << " has been added to the queue." << endl;
+}
+void Dequeue(FCFSQueue& queue) {
+	if (IsEmpty(queue)) {
+		cout << "No customers in queue!" << endl;
+		return;
 	}
-	cout << setw(15) << "Amount total: " << '$' << total << endl;
-	cout << setw(15) << "Tax: " << '$' << total * 0.05 << endl;
-	cout << setw(15) << "Amount due: " << '$' << total * 0.05 + total << endl;
+	customer cus = queue.customerList[0];
+	cout << cus.customerName << " is leaving the queue!" << endl;
+	for (int i = 0; i < GetLength(queue); i++) {
+		queue.customerList[i] = queue.customerList[i + 1];
+	}
+	--queue.length;
 }
