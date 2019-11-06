@@ -5,33 +5,33 @@
 //i feel like visual studio is broken
 using namespace std;
 int MAX;
-int counter = 0; //total amount of orders customer makes
+int counter = 1; //total amount of orders customer makes
 struct menuItemType { //STRUCT FOR WHOLE DATA BEING READ IN FROM FILE
 	string menuItem;
-	double menuPrice;
+	double menuPrice{};
 	int count = 0;
 };
 struct order { // STRUCT TO HOLD THE ORDER THE USER ENTERS
 	string item;
-	double price;
+	double price{};
 	int count1 = 0;
 };
-menuItemType* getData(); //read in from file
+menuItemType* getData(int); //read in from file
 void showMenu(string, double); //show menu
-void printCheck(menuItemType*); //print check
+void printCheck(menuItemType*, int); //print check
 int numItems();
 int main() {
 	cout << "Welcome to Johnny’s Restaurant" << endl;
-	menuItemType *pMenu = getData();
-	printCheck(pMenu);
+	int numOfItems;
+	numOfItems = numItems();
+	menuItemType* pMenu = getData(numOfItems);
+	printCheck(pMenu, numOfItems);
 	system("PAUSE");
 	return 0;
 }
-menuItemType* getData()
+menuItemType* getData(int numOfItems)
 {
-	int numOfItems;
-	numOfItems = numItems();
-	menuItemType * menuList = new menuItemType[numOfItems];
+	menuItemType* menuList = new menuItemType[numOfItems];
 	for (int i = 0; i < numOfItems; i++) {
 		cout << "Enter name of item: ";
 		cin.ignore();
@@ -39,7 +39,7 @@ menuItemType* getData()
 		cout << "How much does it cost? ";
 		cin >> menuList[i].menuPrice;
 	}
-	for (int i = 0; i <= numOfItems; i++) {
+	for (int i = 0; i < numOfItems; i++) {
 		showMenu(menuList[i].menuItem, menuList[i].menuPrice);
 	}
 	return menuList;
@@ -49,21 +49,27 @@ void showMenu(string item, double price) {
 
 	cout << left << setw(13) << item << '\t' << '$' << price << endl;
 }
-void printCheck(menuItemType*pMenu) {
-	int numOfItems = numItems();
-	order * orderList = new order[numOfItems];
-	char loop = 'y';
+void printCheck(menuItemType* pMenu, int numOfItems) {
+	order* orderList = new order[numOfItems];
+	char loop = 'n';
+	while (loop == 'n' || loop == 'N') {
+		cout << "Would you like to make an order?" << endl;
+		cin >> loop;
+		if (loop == 'n' || loop == 'N') {
+			exit(1);
+		}
+	}
 	double total = 0;
 	int choice;
 	while (loop == 'y' || loop == 'Y') {
 		cout << "Which item would you like to choose?" << endl;
-		cout << "Enter number of item (0 for Plain Egg, 7 for Tea)" << endl;
+		cout << "Enter number of item (0 to " << numOfItems - 1 << ")" << endl;
 		cin >> choice;
 		cout << "How many would you like to order?" << endl;
 		cin >> pMenu[choice].count;
-		orderList[counter].item = pMenu[choice].menuItem; //hold user choice into different struct
-		orderList[counter].price = pMenu[choice].menuPrice;
-		orderList[counter].count1 = pMenu[choice].count;
+		orderList[choice].item = pMenu[choice].menuItem; //hold user choice into different struct
+		orderList[choice].price = pMenu[choice].menuPrice;
+		orderList[choice].count1 = pMenu[choice].count;
 		cout << "Would you like to make another choice? (Y/N)" << endl;
 		cin >> loop;
 		if (loop == 'y' || loop == 'Y')
@@ -71,7 +77,7 @@ void printCheck(menuItemType*pMenu) {
 		//counter is used as a loop variable to print out user choices
 
 	}
-	for (int i = 0; i <= counter; i++) { //loop using how many orders user makes (not how many items)
+	for (int i = 0; i < counter; i++) { //loop using how many orders user makes (not how many items)
 		cout << left << setw(12) << orderList[i].item << " " << orderList[i].count1 << ' ' << '$' << orderList[i].price * orderList[i].count1 << endl;
 		total += orderList[i].price * orderList[i].count1;
 	}
