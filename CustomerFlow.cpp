@@ -1,11 +1,10 @@
 #include<iostream>
 #include<iomanip>
 #include<string>
-//the code keeps giving me errors, can you please try running this on your computer?
-//i feel like visual studio is broken
 using namespace std;
 int MAX;
 int counter = 1; //total amount of orders customer makes
+//extern menuList[MAX];
 struct menuItemType { //STRUCT FOR WHOLE DATA BEING READ IN FROM FILE
 	string menuItem;
 	double menuPrice{};
@@ -16,7 +15,7 @@ struct order { // STRUCT TO HOLD THE ORDER THE USER ENTERS
 	double price{};
 	int count1 = 0;
 };
-menuItemType* getData(int); //read in from file
+menuItemType* getData(int); //create own menu
 void showMenu(string, double); //show menu
 void printCheck(menuItemType*, int); //print check
 int numItems();
