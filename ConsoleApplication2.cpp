@@ -3,6 +3,7 @@ using namespace std;
 class GRADES {
 public:
 	GRADES(int s) : size(s) { size = s; };
+	~GRADES();
 	double getData();
 	inline int SIZE();
 private:
@@ -47,4 +48,8 @@ double GRADES::getData() {
 	}
 	total = (sum / size) * ((double)perc/100);
 	return total;
+}
+GRADES::~GRADES() {
+	delete[] listNum;
+	listNum = NULL;
 }
