@@ -1,55 +1,55 @@
-#include <iostream>
+#include<iostream>
+#include<windows.h>
 using namespace std;
-class GRADES {
+class DayOfYear {
 public:
-	GRADES(int s) : size(s) { size = s; };
-	~GRADES();
-	double getData();
-	inline int SIZE();
+	void output(DayOfYear);
+	void getMonth(int &);
+	void getDay(int &);
+	void setMonth(int newMonth) { month = newMonth; }
+	void setDay(int newDay) { day = newDay; }
+	bool cmpDate(const DayOfYear& myDay) { if ((myDay.day == Today.wDay) && (myDay.month == Today.wMonth)) return true; else return false; }
+	void incMonth() { if (month >= 12) month = 1; else month++; }
+	void incDay();
+	SYSTEMTIME Today;
 private:
-	double total = 0;
-	int size, * listNum{}, perc{};
+	int month, day;
 };
-inline int GRADES::SIZE() { cout << "Please enter numbers in this section: "; cin >> size; return size; }
 int main() {
-	double HWtotal, QZtotal, EXtotal, ATtotal, LAtotal;
-	GRADES CALL(0);
-	cout << "GRADE CALCULATOR" << endl;
-	cout << "Homework: " << endl;
-	GRADES HW(CALL.SIZE());
-	HWtotal = HW.getData();
-	cout << "Quizzes: " << endl;
-	GRADES QZ(CALL.SIZE());
-	QZtotal = QZ.getData();
-	cout << "Exams: " << endl;
-	GRADES EX(CALL.SIZE());
-	EXtotal = EX.getData();
-	cout << "Attendance: " << endl;
-	GRADES AT(CALL.SIZE());
-	ATtotal = AT.getData();
-	cout << "Labs: " << endl;
-	GRADES LA(CALL.SIZE());
-	LAtotal = LA.getData();
-	double totalGrade = HWtotal + QZtotal + EXtotal + ATtotal + LAtotal;
-	cout << "Your current grade is: " << totalGrade << endl;
-	return 0;
+	int day = 0, month = 0;
+	int day1 = 0, month1 = 0;
+	DayOfYear birthday{}, today{};
+	GetLocalTime(&today.Today);
+    today.setMonth(today.Today.wMonth);
+    today.setDay(today.Today.wDay);
+    today.getMonth(month);
+    today.getDay(day);
+
+	birthday.setMonth(4);
+	birthday.setDay(10);
+	birthday.getMonth(month1);
+	birthday.getDay(day1);
+	cout << "The current day is " << day << endl;
+	cout << "The current month is " << month << endl;
+
+
+    birthday.output(birthday);
+    system("PAUSE");
+    return 0;
 }
-double GRADES::getData() {
-	double sum = 0;
-	cout << "Enter Precentage: ";
-	cin >> perc;
-	cout << "Enter all your grades: " << endl;
-	listNum = new int[size];
-	for (int i = 0; i < size; i++) {
-		cin >> listNum[i];
+void DayOfYear::output(DayOfYear birthday) {
+	GetLocalTime(&Today);
+	cout << "Today's date: ";
+	cout << "Day: " << Today.wDay << " Month: " << Today.wMonth << endl;
+	cout << "Please enter your birthday: " << endl;
+	cout << "Day: ";
+	cin >> birthday.day;
+	cout << "Month: ";
+	cin >> birthday.month;
+	if (birthday.day == Today.wDay && birthday.month == Today.wMonth) {
+		cout << "Happy Birthday!" << endl;
 	}
-	for (int i = 0; i < size; i++) {
-		sum += listNum[i];
+	else {
+		cout << "Today is not your Birthday!" << endl;
 	}
-	total = (sum / size) * ((double)perc/100);
-	return total;
-}
-GRADES::~GRADES() {
-	delete[] listNum;
-	listNum = NULL;
 }
