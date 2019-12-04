@@ -7,19 +7,25 @@ template<class T>
 class Set {
 private:
 	T* set;
-	int size, counter = 0, max;
+	int size = 0, counter = 0, max = 0, number = 0;
+	Set** sets;
 public:
 	Set(int num) : size(num) {
 		set = new T[num];
 	}
+	void setSets();
 	void setData(const T&);
 	int getCounter() { return counter; }
 	void displaySet();
 	T* pointer();
 	void addItem(int);
 	void expand(int);
+	void expand1(int);
+	void storeSets();
 };
 int main() {
+	Set<int>call(0);
+	call.setSets();
 	static int* p1;
 	static string* p2;
 	static double* p3;
@@ -99,6 +105,7 @@ int main() {
 			set4.displaySet();
 			p4 = set4.pointer();
 		}
+		call.storeSets();
 		cout << "Would you like to create another set?" << endl;
 		cin >> loop;
 	}
@@ -122,6 +129,7 @@ void Set<T>::setData(const T& num1) {
 	set[counter] = num1;
 	counter++;
 	max = counter;
+	
 }
 template<class T>
 void Set<T>::displaySet() {
@@ -150,10 +158,31 @@ template<class T>
 void Set<T>::expand(int num) {
 	int newSize = num + 1;
 	T* newSet = new T[newSize];
-	for (int i = 0; i < size; i++) {
-		newSet[i] = set[i];
-	}
+	copy(set, set + min(num, newSize), newSet);
 	delete[] set;
 	set = newSet;
 	max = newSize;
+}
+template<class T>
+void Set<T>::setSets() {
+	if (number == 0) {
+		number++;
+		sets = new Set[number];
+	}
+	else expand1(number);
+}
+template<class T>
+void Set<T>::expand1(int num) {
+	int newSize = num + 1;
+	Set* newSet = new Set[newSize];
+	copy(sets, sets + min(num, newSize), newSet);
+	delete[] sets;
+	sets = newSet;
+	max = newSize;
+}
+template<class T>
+void Set<T>::storeSets() {
+	for (int i = 0; i < number; i++) {
+		sets[i] = &set;
+	}
 }
