@@ -1,5 +1,6 @@
 #include<iostream>
 #include<string>
+#include<algorithm>
 using namespace std;
 
 template<class T>
@@ -7,7 +8,6 @@ class Set {
 private:
 	T* set;
 	int size, counter = 0, max;
-	Set* sets;
 public:
 	Set(int num) : size(num) {
 		set = new T[num];
@@ -16,27 +16,52 @@ public:
 	int getCounter() { return counter; }
 	void displaySet();
 	T* pointer();
+	void addItem(int);
+	void expand(int);
 };
 int main() {
+	static int* p1;
+	static string* p2;
+	static double* p3;
+	static char* p4;
 	string dType;
-	int setSize;
+	int maxInt, maxString, maxDouble, maxChar;
+	int setSize, intCounter = 0, stringCounter = 0, doubleCounter = 0, charCounter = 0;
 	char loop = 'y';
 	while (loop == 'y') {
 		cout << "What is the data type of the set you want to create? (int, string, double, char)" << endl;
 		cin >> dType;
 		if (dType == "int") {
-			cout << "Enter size of set: ";
-			cin >> setSize;
-			int test;
-			Set<int>set1(setSize);
-			for (int i = 0; i < setSize; i++) {
-				cin >> test;
-				set1.setData(test);
+			char ans = 'y';
+			while(intCounter == 0 || ans == 'y') {
+				if (intCounter == 0) {
+					cout << "Enter size of set: ";
+					cin >> setSize;
+					int test;
+					Set<int>set1(setSize);
+					for (int i = 0; i < setSize; i++) {
+						cin >> test;
+						set1.setData(test);
+					}
+					maxInt = setSize;
+					set1.displaySet();
+					p1 = set1.pointer();
+					intCounter++;
+					break;
+				}
+				else {
+					cout << "Would you like to add new item?" << endl;
+					cin >> ans;
+					if (ans == 'y') {
+						Set<int>call(0);
+						call.addItem(maxInt);
+						break;
+					}
+					else {
+						intCounter = 0;
+					}
+				}
 			}
-			set1.displaySet();
-			int* p1 = set1.pointer();
-			delete[] p1;
-			p1 = NULL;
 		}
 		else if (dType == "string") {
 			cout << "Enter size of set: ";
@@ -48,9 +73,7 @@ int main() {
 				set2.setData(test);
 			}
 			set2.displaySet();
-			string* p2 = set2.pointer();
-			delete[] p2;
-			p2 = NULL;
+			p2 = set2.pointer();
 		}
 		else if (dType == "double") {
 			cout << "Enter size of set: ";
@@ -62,9 +85,7 @@ int main() {
 				set3.setData(test);
 			}
 			set3.displaySet();
-			double* p3 = set3.pointer();
-			delete[] p3;
-			p3 = NULL;
+			p3 = set3.pointer();
 		}
 		else if (dType == "char") {
 			cout << "Enter size of set: ";
@@ -76,13 +97,19 @@ int main() {
 				set4.setData(test);
 			}
 			set4.displaySet();
-			char* p4 = set4.pointer();
-			delete[] p4;
-			p4 = NULL;
+			p4 = set4.pointer();
 		}
 		cout << "Would you like to create another set?" << endl;
 		cin >> loop;
 	}
+	delete[] p1;
+	p1 = NULL;
+	delete[] p2;
+	p2 = NULL;
+	delete[] p3;
+	p3 = NULL;
+	delete[] p4;
+	p4 = NULL;
 	return 0;
 }
 template<class T>
@@ -94,16 +121,39 @@ void Set<T>::setData(const T& num1) {
 	}
 	set[counter] = num1;
 	counter++;
+	max = counter;
 }
 template<class T>
 void Set<T>::displaySet() {
-	cout << "Number of Itms in this set: " << getCounter() << endl;
+	cout << "Number of Items in this set: " << max << endl;
 	cout << "Items in this set: " << endl;
-	for (int i = 0; i < getCounter(); i++) {
+	for (int i = 0; i < max; i++) {
 		cout << "Item " << i + 1 << ": " << set[i] << endl;
 	}
 }
 template<class T>
 T* Set<T>::pointer() {
 	return set;
+}
+template<class T>
+void Set<T>::addItem(int num) {
+	expand(num);
+	cout << "Add new Item: " << endl;
+	for (int i = num + 1; i <= num + 1;) {
+		cin >> set[i];
+		break;
+	}
+	displaySet();
+}
+
+template<class T>
+void Set<T>::expand(int num) {
+	int newSize = num + 1;
+	T* newSet = new T[newSize];
+	for (int i = 0; i < size; i++) {
+		newSet[i] = set[i];
+	}
+	delete[] set;
+	set = newSet;
+	max = newSize;
 }
